@@ -33,10 +33,10 @@ sub = sub{:,:};
 % finished fil1 1:17
 for file = 1:1:length(sub_list{:,1})
 %for file = 1
-    ECG_path = [input_path strcat('\', char(sub_list{file, 2}),'\transcribe\',char(sub_list{file, 1}))];
+    ECG_path = [input_path strcat('\', char(sub_list{file, 3}),'\transcribe\',char(sub_list{file, 1}))];
     cd('Z:\TBI Sleep\code\TBI_HRV')
     ECG_dt = import_ECG(ECG_path);    
-    subID = char(sub_list{file, 2});
+    subID = char(sub_list{file, 3});
     %foldID = char(sub_list{file, 2});
     %try
     cd(output_path_level1);
