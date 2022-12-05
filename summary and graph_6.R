@@ -827,24 +827,37 @@ fwrite(f1_macro,"macro_statistics.csv")
 }
 
 # Graph Hypnogram
-sub <- full_dt[sub %in% "TBI_5",]
+sub <- full_dt[sub %in% "TBI_6",]
 setDT(sub)
-levels(sub$Predicted) <- c("Wake", "Light", "Deep", "REM")
-levels(sub$Actual) <- c("Wake", "Light", "Deep", "REM")
+sub[Predicted %in% 1, Predicted := "Wake"]
+sub[Predicted %in% 2, Predicted := "Light"]
+sub[Predicted %in% 3, Predicted := "Deep"]
+sub[Predicted %in% 4, Predicted := "REM"]
+
+sub[Actual %in% 1, Actual := "Wake"]
+sub[Actual %in% 2, Actual := "Light"]
+sub[Actual %in% 3, Actual := "Deep"]
+sub[Actual %in% 4, Actual := "REM"]
+
+sub$Predicted <- factor(sub$Predicted, levels = c("Deep", "Light",  "REM", "Wake" ))
+sub$Actual <- factor(sub$Actual, levels = c("Deep", "Light",  "REM", "Wake" ))
+#levels(sub$Predicted) <- c("Wake",  "REM", "Light", "Deep")
+#levels(sub$Actual) <- c("Wake",  "REM", "Light", "Deep")
 a<- 1:nrow(sub)
 b <- a/2
 sub[, time := b,]
-
+sub[, time := time/60]
 
 ggplot(data=sub, aes(x=time, y=Actual, group = 1)) +
-  geom_line( color = "black", size = 6) + geom_line(data=sub, aes(x=time, y=Predicted, group = 1), color = "Dark Green", size = 2) +
-  xlab("Time (min)") + ylab("Sleep Stages") +
+  geom_line( color = "black", size = 6) + geom_line(data=sub, aes(x=time, y=Predicted, group = 1),
+                                                    color = "Dark Green", size = 2) +
+  scale_x_continuous(name="Time (hrs)", limits=c(0, 8), breaks=seq(0,8,1)) + ylab("Sleep Stages") +
   theme_classic(
     base_size = 50,
     base_family = "",
     base_line_size = 5)
-ggsave(paste0(result_p,"/","Hypnogram_",unique(sub$sub),"RF.png"), last_plot(), 
-       width = max(b)*3*10, height = 5000, units = "px")
+ggsave(paste0(result_p,"/","Hypnogram_",unique(sub$sub),"RF.eps"), last_plot(), 
+       device = "eps")
 
 
 # 
